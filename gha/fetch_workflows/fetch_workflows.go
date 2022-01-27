@@ -76,7 +76,7 @@ func run(){
 		repoName := repoInfo[1]
 		cachedWorkflowsName := owner + "_" + repoName + "_workflows.json"
 		if cache {
-			logger.Printf("Caching workflows for %s",repoInfo)
+			// logger.Printf("Caching workflows for %s",repoInfo)
 			var workflowToCache []GHAWorkflow
 			workflowStruct, _, _ := client.Actions.ListWorkflows(ctx, owner, repoName, nil)
 			for _, ghaWf := range workflowStruct.Workflows {
@@ -105,7 +105,7 @@ func run(){
 			logger.Printf("Cache is expired or not existed !!")
 			wf.Rerun(0.5)
 			if !wf.IsRunning("cachingWorkflows") {
-				cmd := exec.Command(os.Args[0], "-cache", "-repo", repo)
+				cmd := exec.Command("./bin/fetch_workflows", "-cache", "-repo", repo)
 				logger.Printf("Run in background with comand %s", cmd.String())
 				if err := wf.RunInBackground("cachingWorkflows", cmd); err != nil {
 					wf.FatalError(err)
@@ -120,6 +120,11 @@ func run(){
 			}
 		}
 		for _, ghaWf := range GhaWorkflows {
+			cmd := exec.Command("./bin/fetch_runs", "-cache", "-repo", repo, "-workflow", ghaWf.FileName)
+			logger.Printf("Run in background with comand %s", cmd.String())
+
+			jobName := "cache_runs" + owner + repoName + ghaWf.FileName
+			wf.RunInBackground(jobName, cmd)
 			wf.NewItem(ghaWf.Name).Arg(ghaWf.FileName).Subtitle("").UID(ghaWf.UID).Icon(workflowIcon).Valid(true)
 		}
 		if len(query) > 0 {

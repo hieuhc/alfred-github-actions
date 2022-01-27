@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -12,21 +13,26 @@ import (
 	aw "github.com/deanishe/awgo"
 	"github.com/google/go-github/v41/github"
 	"github.com/keybase/go-keychain"
-	"golang.org/x/oauth2"
 	"go.deanishe.net/fuzzy"
+	"golang.org/x/oauth2"
 )
 
 // Workflow is the main API
 var (
 	logger = log.New(os.Stderr, "prefixLogger", log.LstdFlags)
-	successIcon  = &aw.Icon{Value: "icons/green-check.png"}
-	failIcon  = &aw.Icon{Value: "icons/red-fail.png"}
-	runningIcon  = &aw.Icon{Value: "icons/gha-run.png"}
+	maxAge =  3 * time.Minute
 	wf *aw.Workflow
 	repo string
 	query string
 	workflow string
-	ghaRunIcon *aw.Icon
+	cache bool
+	ghaIconPath string
+)
+
+const (
+	successIconPath  =  "icons/green-check.png"
+	failIconPath  =  "icons/red-fail.png"
+	runningIconPath  = "icons/gha-run.png"
 )
 
 func init(){
@@ -40,7 +46,61 @@ func init(){
 	flag.StringVar(&repo, "repo", "", "github repository to fetch workflows")
 	flag.StringVar(&workflow, "workflow", "", "workflow ID to fetch runs")
 	flag.StringVar(&query, "query", "", "gha workflow to fetch instances in next step")
+	flag.BoolVar(&cache, "cache", false, "cache runs from a workflow")
 
+}
+type RunItem struct {
+	Title string
+	SubTitle string
+	Args string
+	UID string
+	IconPath string
+
+}
+
+func fetchRun(client *github.Client, context context.Context, owner string, repoName string) ([]RunItem, error) {
+	opts := &github.ListWorkflowRunsOptions{ListOptions: github.ListOptions{PerPage: 50}}
+	workflowRuns, _, err := client.Actions.ListWorkflowRunsByFileName(context, owner, repoName, workflow, opts)
+	if err != nil {
+		return nil, err
+	}
+	var runItems []RunItem
+	for _, run := range workflowRuns.WorkflowRuns {
+		var status string
+		if run.Conclusion != nil {
+			status = *run.Conclusion
+			if status == "success" {
+				ghaIconPath = successIconPath
+			} else{
+				ghaIconPath = failIconPath
+			}
+
+		} else {
+			status = "running"
+			ghaIconPath = runningIconPath
+		}
+
+		createdAt := *run.CreatedAt
+		diffMins := int(time.Since(createdAt.Time).Minutes())
+		var diffString string = ""
+		var diffHour int = diffMins / 60
+		if diffHour != 0 {
+			diffString += strconv.Itoa(diffHour) + "h"
+		}
+		diffString += strconv.Itoa(diffMins % 60) + "m"
+		branch := *run.HeadBranch
+		var commitAuthor string = *run.HeadCommit.Author.Name
+		subtitle := *run.Name + " #" + strconv.Itoa(*run.RunNumber) + ": " + diffString + " ago" + " by " + commitAuthor
+		title := branch
+		runItems = append(runItems, RunItem{
+			Title: title,
+			SubTitle: subtitle,
+			Args: *run.HTMLURL,
+			UID: strconv.Itoa(int(*run.ID)),
+			IconPath: ghaIconPath,
+		})
+	}
+	return runItems, nil
 }
 
 func run(){
@@ -76,36 +136,40 @@ func run(){
 		repoInfo := strings.Split(repo, "/")
 		owner := repoInfo[0]
 		repoName := repoInfo[1]
-		opts := &github.ListWorkflowRunsOptions{ListOptions: github.ListOptions{PerPage: 20}}
-		workflowRuns, _, _ := client.Actions.ListWorkflowRunsByFileName(ctx, owner, repoName, workflow, opts)
-		// todo use cache
-		for _, run := range workflowRuns.WorkflowRuns {
-			var status string
-			if run.Conclusion != nil {
-				status = *run.Conclusion
-				if status == "success" {
-					ghaRunIcon = successIcon
-				} else{
-					ghaRunIcon = failIcon
-				}
-
-			} else {
-				status = "running"
-				ghaRunIcon = runningIcon
+		runCacheName := fmt.Sprintf("%s_%s_run_%s.json", owner, repoName, workflow)
+		if cache {
+			logger.Printf("Caching runs in this repo")
+			runItems, err := fetchRun(client, ctx, owner, repoName)
+			if err != nil {
+				wf.Fatal(err.Error())
 			}
-
-			createdAt := *run.CreatedAt
-			diffMins := int(time.Since(createdAt.Time).Minutes())
-			var diffString string = ""
-			var diffHour int = diffMins / 60
-			if diffHour != 0 {
-				diffString += strconv.Itoa(diffHour) + "h"
+			if err := wf.Cache.StoreJSON(runCacheName, runItems); err != nil {
+				wf.Fatal(err.Error())
 			}
-			diffString += strconv.Itoa(diffMins % 60) + "m"
-			subtitle := status + " #" + strconv.Itoa(*run.RunNumber) + " " + diffString + " ago"
-
-			wf.NewItem(*run.Name).Arg(*run.HTMLURL).Subtitle(subtitle).UID(strconv.Itoa(int(*run.ID))).Icon(ghaRunIcon).Valid(true)
+			return
 		}
+		// Check if the background job started at workflow level is still running
+		backgroundJobName := "cache_runs" + owner + repoName + workflow
+		for {
+			if wf.IsRunning(backgroundJobName){
+				logger.Printf("Background job %s is still running", backgroundJobName)
+				time.Sleep(200 * time.Millisecond)
+			} else {
+				break
+			}
+		}
+
+		reload := func() (interface{}, error) { return fetchRun(client, ctx, owner, repoName) }
+		var runItems []RunItem
+		if err := wf.Cache.LoadOrStoreJSON(runCacheName, maxAge, reload, &runItems); err != nil {
+			wf.Fatal(err.Error())
+		}
+		for _, item := range runItems {
+			ghaRunIcon := aw.Icon{Value: item.IconPath}
+			wf.NewItem(item.Title).Arg(item.Args).Subtitle(item.SubTitle).UID(item.UID).Icon(&ghaRunIcon).Valid(true)
+		}
+
+
 		if len(query) > 0 {
 			logger.Println("query: ", query)
 			wf.Filter(query)
