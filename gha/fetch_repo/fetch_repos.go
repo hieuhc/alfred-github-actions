@@ -23,6 +23,7 @@ type RepoWorkflowItem struct {
 	Name string
 	Description string
 	UID string
+	HTMLURL string
 }
 
 func init(){
@@ -44,7 +45,7 @@ func run(){
 
 	for _, repoItem := range repos {
 		repoFullName := repoItem.Owner + "/" + repoItem.Name
-		wf.NewItem(repoFullName).Arg(repoFullName).Subtitle(repoItem.Description).UID(repoItem.UID).Icon(repoIcon).Valid(true)
+		wf.NewItem(repoFullName).Arg(repoFullName).Subtitle(repoItem.Description).UID(repoItem.UID).Icon(repoIcon).Valid(true).NewModifier("cmd").Arg(repoItem.HTMLURL)
 	}
 
 	if len(args) > 0 {

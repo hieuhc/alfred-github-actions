@@ -34,6 +34,7 @@ type RepoWorkflowItem struct {
 	Name string
 	Description string
 	UID string
+	HTMLURL string
  
 }
 
@@ -65,7 +66,7 @@ func fetchRepo(context context.Context, token string) ([]RepoWorkflowItem, error
 			} else {
 				desc = ""
 			}
-			repoItems = append(repoItems, RepoWorkflowItem{*p.Owner.Login, *p.Name, desc, strconv.Itoa(int(*p.ID))})
+			repoItems = append(repoItems, RepoWorkflowItem{*p.Owner.Login, *p.Name, desc, strconv.Itoa(int(*p.ID)), *p.HTMLURL})
 		}
 		pageNum += 1
 	}

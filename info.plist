@@ -12,7 +12,7 @@
 				<key>destinationuid</key>
 				<string>F34201E5-52DD-45C8-9E1A-828DEFB2A724</string>
 				<key>modifiers</key>
-				<integer>0</integer>
+				<integer>1048576</integer>
 				<key>modifiersubtext</key>
 				<string></string>
 				<key>vitoclose</key>
@@ -41,6 +41,16 @@
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>260788C9-2950-429C-87C9-19A48C05B252</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string>Open Github Acion URL of this repo</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -96,6 +106,16 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>545974EA-B91C-4902-9090-487D72C4C9F0</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string>Open this workflow URL</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 		</array>
 		<key>B39259EC-905A-4510-9DB4-F872868514FD</key>
 		<array>
@@ -147,25 +167,6 @@
 	<string>Github Action Workflow</string>
 	<key>objects</key>
 	<array>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>browser</key>
-				<string></string>
-				<key>spaces</key>
-				<string></string>
-				<key>url</key>
-				<string></string>
-				<key>utf8</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.openurl</string>
-			<key>uid</key>
-			<string>F34201E5-52DD-45C8-9E1A-828DEFB2A724</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -233,55 +234,6 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>queuedelaycustom</key>
-				<integer>1</integer>
-				<key>queuedelayimmediatelyinitially</key>
-				<true/>
-				<key>queuedelaymode</key>
-				<integer>2</integer>
-				<key>queuemode</key>
-				<integer>1</integer>
-				<key>runningsubtext</key>
-				<string></string>
-				<key>script</key>
-				<string>query=$1
-
-./bin/fetch_workflows -repo "${repo}" -query "${query}"</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string>./bin/products</string>
-				<key>subtext</key>
-				<string></string>
-				<key>title</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
-				<key>withspace</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.scriptfilter</string>
-			<key>uid</key>
-			<string>ABA0DF5B-E3B5-4CB5-9D4B-66FE30AF879D</string>
-			<key>version</key>
-			<integer>3</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>alfredfiltersresults</key>
-				<false/>
-				<key>alfredfiltersresultsmatchmode</key>
-				<integer>0</integer>
-				<key>argumenttreatemptyqueryasnil</key>
-				<true/>
-				<key>argumenttrimmode</key>
-				<integer>0</integer>
-				<key>argumenttype</key>
-				<integer>1</integer>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>queuedelaycustom</key>
 				<integer>3</integer>
 				<key>queuedelayimmediatelyinitially</key>
 				<true/>
@@ -314,6 +266,55 @@
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
 			<string>33A2F208-C2A4-42DA-B801-ED7EA04F7D94</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>queuedelaycustom</key>
+				<integer>1</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>2</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string></string>
+				<key>script</key>
+				<string>query=$1
+
+./bin/fetch_workflows -repo "${repo}" -query "${query}"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>./bin/products</string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>ABA0DF5B-E3B5-4CB5-9D4B-66FE30AF879D</string>
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
@@ -362,6 +363,84 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>browser</key>
+				<string></string>
+				<key>spaces</key>
+				<string></string>
+				<key>url</key>
+				<string></string>
+				<key>utf8</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openurl</string>
+			<key>uid</key>
+			<string>260788C9-2950-429C-87C9-19A48C05B252</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>browser</key>
+				<string></string>
+				<key>spaces</key>
+				<string></string>
+				<key>url</key>
+				<string></string>
+				<key>utf8</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openurl</string>
+			<key>uid</key>
+			<string>545974EA-B91C-4902-9090-487D72C4C9F0</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>browser</key>
+				<string></string>
+				<key>spaces</key>
+				<string></string>
+				<key>url</key>
+				<string></string>
+				<key>utf8</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.openurl</string>
+			<key>uid</key>
+			<string>F34201E5-52DD-45C8-9E1A-828DEFB2A724</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>{var:hotkey}-login</string>
+				<key>subtext</key>
+				<string>Authenticate with Personal Access Token</string>
+				<key>text</key>
+				<string>Login to Github</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>3A3B333D-2E97-4479-AF29-B31FCB5EAE9D</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
@@ -392,21 +471,21 @@ fi</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>argumenttype</key>
-				<integer>0</integer>
-				<key>keyword</key>
-				<string>{var:hotkey}-login</string>
-				<key>subtext</key>
-				<string>Authenticate with Personal Access Token</string>
-				<key>text</key>
-				<string>Login to Github</string>
-				<key>withspace</key>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
 				<true/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>{query}</string>
+				<key>title</key>
+				<string>Login done</string>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
+			<string>alfred.workflow.output.notification</string>
 			<key>uid</key>
-			<string>3A3B333D-2E97-4479-AF29-B31FCB5EAE9D</string>
+			<string>6CDFE549-1B9C-4EA5-A024-18FE99C69199</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -427,27 +506,6 @@ fi</string>
 			<string>alfred.workflow.utility.argument</string>
 			<key>uid</key>
 			<string>B39259EC-905A-4510-9DB4-F872868514FD</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<true/>
-				<key>removeextension</key>
-				<false/>
-				<key>text</key>
-				<string>{query}</string>
-				<key>title</key>
-				<string>Login done</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
-			<key>uid</key>
-			<string>6CDFE549-1B9C-4EA5-A024-18FE99C69199</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -532,96 +590,110 @@ First-time use:
 Run `gha-login` to authenticate with Github</string>
 	<key>uidata</key>
 	<dict>
+		<key>260788C9-2950-429C-87C9-19A48C05B252</key>
+		<dict>
+			<key>xpos</key>
+			<integer>240</integer>
+			<key>ypos</key>
+			<integer>230</integer>
+		</dict>
 		<key>33A2F208-C2A4-42DA-B801-ED7EA04F7D94</key>
 		<dict>
 			<key>xpos</key>
-			<integer>680</integer>
+			<integer>755</integer>
 			<key>ypos</key>
-			<integer>130</integer>
+			<integer>50</integer>
 		</dict>
 		<key>38278A50-718C-4145-A3C0-52ACD468B7E9</key>
 		<dict>
 			<key>xpos</key>
-			<integer>545</integer>
+			<integer>575</integer>
 			<key>ypos</key>
-			<integer>135</integer>
+			<integer>80</integer>
 		</dict>
 		<key>38863873-18DD-4920-A28E-1B8A1AF85CE8</key>
 		<dict>
 			<key>xpos</key>
-			<integer>120</integer>
+			<integer>20</integer>
 			<key>ypos</key>
-			<integer>105</integer>
+			<integer>30</integer>
 		</dict>
 		<key>3A3B333D-2E97-4479-AF29-B31FCB5EAE9D</key>
 		<dict>
 			<key>xpos</key>
-			<integer>120</integer>
+			<integer>30</integer>
 			<key>ypos</key>
-			<integer>220</integer>
+			<integer>360</integer>
 		</dict>
 		<key>3E796BF2-A7BD-4B28-9A03-5DC8A6BB30A7</key>
 		<dict>
 			<key>xpos</key>
-			<integer>380</integer>
+			<integer>475</integer>
 			<key>ypos</key>
-			<integer>220</integer>
+			<integer>390</integer>
+		</dict>
+		<key>545974EA-B91C-4902-9090-487D72C4C9F0</key>
+		<dict>
+			<key>xpos</key>
+			<integer>555</integer>
+			<key>ypos</key>
+			<integer>235</integer>
 		</dict>
 		<key>5C099F2A-5444-49DA-A2C1-0C4499D6F899</key>
 		<dict>
 			<key>xpos</key>
 			<integer>290</integer>
 			<key>ypos</key>
-			<integer>130</integer>
+			<integer>75</integer>
 		</dict>
 		<key>6CDFE549-1B9C-4EA5-A024-18FE99C69199</key>
 		<dict>
 			<key>xpos</key>
-			<integer>830</integer>
+			<integer>865</integer>
 			<key>ypos</key>
-			<integer>270</integer>
+			<integer>400</integer>
 		</dict>
 		<key>7B2472FF-19EC-451F-8FB4-F21994DA5B36</key>
 		<dict>
 			<key>xpos</key>
-			<integer>850</integer>
+			<integer>880</integer>
 			<key>ypos</key>
-			<integer>475</integer>
+			<integer>640</integer>
 		</dict>
 		<key>ABA0DF5B-E3B5-4CB5-9D4B-66FE30AF879D</key>
 		<dict>
 			<key>xpos</key>
-			<integer>375</integer>
+			<integer>385</integer>
 			<key>ypos</key>
-			<integer>105</integer>
+			<integer>65</integer>
 		</dict>
 		<key>B39259EC-905A-4510-9DB4-F872868514FD</key>
 		<dict>
 			<key>xpos</key>
-			<integer>290</integer>
+			<integer>285</integer>
 			<key>ypos</key>
-			<integer>250</integer>
+			<integer>420</integer>
 		</dict>
 		<key>BB9F0B96-0429-4802-815A-731CAC2334D9</key>
 		<dict>
 			<key>xpos</key>
-			<integer>105</integer>
+			<integer>25</integer>
 			<key>ypos</key>
-			<integer>360</integer>
+			<integer>570</integer>
 		</dict>
 		<key>DF8534BD-CD2F-4A0C-A7F9-9F6A2ED11D3A</key>
 		<dict>
 			<key>xpos</key>
-			<integer>360</integer>
-			<key>ypos</key>
 			<integer>385</integer>
+			<key>ypos</key>
+			<integer>590</integer>
 		</dict>
 		<key>F34201E5-52DD-45C8-9E1A-828DEFB2A724</key>
 		<dict>
 			<key>xpos</key>
-			<integer>925</integer>
+			<integer>885</integer>
 			<key>ypos</key>
-			<integer>55</integer>
+			<integer>245</integer>
 		</dict>
 	</dict>
 	<key>variables</key>

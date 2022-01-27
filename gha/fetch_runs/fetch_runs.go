@@ -52,7 +52,7 @@ func init(){
 type RunItem struct {
 	Title string
 	SubTitle string
-	Args string
+	HTMLURL string
 	UID string
 	IconPath string
 
@@ -95,7 +95,7 @@ func fetchRun(client *github.Client, context context.Context, owner string, repo
 		runItems = append(runItems, RunItem{
 			Title: title,
 			SubTitle: subtitle,
-			Args: *run.HTMLURL,
+			HTMLURL: *run.HTMLURL,
 			UID: strconv.Itoa(int(*run.ID)),
 			IconPath: ghaIconPath,
 		})
@@ -137,13 +137,11 @@ func run(){
 		owner := repoInfo[0]
 		repoName := repoInfo[1]
 		runCacheName := fmt.Sprintf("%s_%s_run_%s.json", owner, repoName, workflow)
+
+		reload := func() (interface{}, error) { return fetchRun(client, ctx, owner, repoName) }
+		var runItems []RunItem
 		if cache {
-			logger.Printf("Caching runs in this repo")
-			runItems, err := fetchRun(client, ctx, owner, repoName)
-			if err != nil {
-				wf.Fatal(err.Error())
-			}
-			if err := wf.Cache.StoreJSON(runCacheName, runItems); err != nil {
+			if err := wf.Cache.LoadOrStoreJSON(runCacheName, maxAge, reload, &runItems); err != nil {
 				wf.Fatal(err.Error())
 			}
 			return
@@ -159,14 +157,12 @@ func run(){
 			}
 		}
 
-		reload := func() (interface{}, error) { return fetchRun(client, ctx, owner, repoName) }
-		var runItems []RunItem
 		if err := wf.Cache.LoadOrStoreJSON(runCacheName, maxAge, reload, &runItems); err != nil {
 			wf.Fatal(err.Error())
 		}
 		for _, item := range runItems {
 			ghaRunIcon := aw.Icon{Value: item.IconPath}
-			wf.NewItem(item.Title).Arg(item.Args).Subtitle(item.SubTitle).UID(item.UID).Icon(&ghaRunIcon).Valid(true)
+			wf.NewItem(item.Title).Arg("").Subtitle(item.SubTitle).UID(item.UID).Icon(&ghaRunIcon).Valid(true).NewModifier("cmd").Arg(item.HTMLURL)
 		}
 
 

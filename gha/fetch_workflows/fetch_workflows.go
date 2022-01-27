@@ -19,8 +19,8 @@ import (
 // Workflow is the main API
 var (
 	logger = log.New(os.Stderr, "prefixLogger", log.LstdFlags)
-	maxCacheAge =  24 * time.Hour
-	workflowIcon  = &aw.Icon{Value: "icons/gha-logo.png"}
+	maxCacheAge =  10 * time.Minute
+	workflowIcon  = &aw.Icon{Value: "icons/gha_wf.png"}
 	wf *aw.Workflow
 	repo string
 	query string
@@ -31,6 +31,7 @@ type GHAWorkflow struct {
 	Name string
 	FileName string
 	UID string
+	HTMLURL string
 }
 
 func init(){
@@ -85,6 +86,7 @@ func run(){
 					Name: *ghaWf.Name,
 					FileName: fileName,
 					UID: strconv.Itoa(int(*ghaWf.ID)),
+					HTMLURL: strings.Replace(*ghaWf.HTMLURL, "blob/master/.github", "actions", 1),
 				})
 			}
 			err := wf.Cache.StoreJSON(cachedWorkflowsName, workflowToCache)
@@ -125,7 +127,7 @@ func run(){
 
 			jobName := "cache_runs" + owner + repoName + ghaWf.FileName
 			wf.RunInBackground(jobName, cmd)
-			wf.NewItem(ghaWf.Name).Arg(ghaWf.FileName).Subtitle("").UID(ghaWf.UID).Icon(workflowIcon).Valid(true)
+			wf.NewItem(ghaWf.Name).Arg(ghaWf.FileName).Subtitle("").UID(ghaWf.UID).Icon(workflowIcon).Valid(true).NewModifier("cmd").Arg(ghaWf.HTMLURL)
 		}
 		if len(query) > 0 {
 			logger.Println("query: ", query)
