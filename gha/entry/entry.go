@@ -129,8 +129,6 @@ func run(){
 		wf.Fatal(err.Error())
 	}
 	err = wf.Cache.StoreJSON(cachedGithubRepos, repos)
-	logger.Println("datadir", wf.DataDir())
-	logger.Println("cachedir", wf.Cache.Dir)
 	if err != nil {
 		wf.Fatal(err.Error())
 	}

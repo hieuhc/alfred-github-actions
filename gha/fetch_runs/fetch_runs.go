@@ -55,6 +55,8 @@ type RunItem struct {
 	HTMLURL string
 	UID string
 	IconPath string
+	WorkflowName string
+	RunNumber string
 
 }
 
@@ -65,6 +67,7 @@ func fetchRun(client *github.Client, context context.Context, owner string, repo
 		return nil, err
 	}
 	var runItems []RunItem
+	workflowName := strings.Split(workflow, ".")[0]
 	for _, run := range workflowRuns.WorkflowRuns {
 		var status string
 		if run.Conclusion != nil {
@@ -97,6 +100,8 @@ func fetchRun(client *github.Client, context context.Context, owner string, repo
 			SubTitle: subtitle,
 			HTMLURL: *run.HTMLURL,
 			UID: strconv.Itoa(int(*run.ID)),
+			WorkflowName: workflowName,
+			RunNumber: strconv.Itoa(*run.RunNumber),
 			IconPath: ghaIconPath,
 		})
 	}
@@ -162,9 +167,9 @@ func run(){
 		}
 		for _, item := range runItems {
 			ghaRunIcon := aw.Icon{Value: item.IconPath}
-			wf.NewItem(item.Title).Arg("").Subtitle(item.SubTitle).UID(item.UID).Icon(&ghaRunIcon).Valid(true).NewModifier("cmd").Arg(item.HTMLURL)
+			// vars := wf.Var([string]string{"runID": item.UID, "branch": item.Title, "workflow": workflow, "runURL": item.HTMLURL})
+			wf.NewItem(item.Title).Var("runID", item.UID).Var("runNumber", item.RunNumber).Var("branch", item.Title).Var("workflow", item.WorkflowName).Subtitle(item.SubTitle).UID(item.UID).Icon(&ghaRunIcon).Valid(true).NewModifier("cmd").Arg(item.HTMLURL)
 		}
-
 
 		if len(query) > 0 {
 			logger.Println("query: ", query)

@@ -18,6 +18,7 @@ workflow: build clean target
 	bin/fetch_repos \
 	bin/fetch_workflows \
 	bin/fetch_runs \
+	bin/watch_run \
 
 build-entry:
 	go build -ldflags='-s -w' -trimpath -o bin/entry gha/entry/entry.go
@@ -31,4 +32,7 @@ build-workflows:
 build-runs:
 	go build -ldflags='-s -w' -trimpath -o bin/fetch_runs gha/fetch_runs/fetch_runs.go
 
-build: build-entry build-repos build-workflows build-runs
+build-watch-run:
+	go build -ldflags='-s -w' -trimpath -o bin/watch_run gha/watch_run/watch_run.go
+
+build: build-entry build-repos build-workflows build-runs build-watch-run
