@@ -152,6 +152,7 @@ func run(){
 			return
 		}
 		// Check if the background job started at workflow level is still running
+		// TODO sync with background jobname in fetch_workflows
 		backgroundJobName := "cache_runs" + owner + repoName + workflow
 		for {
 			if wf.IsRunning(backgroundJobName){
@@ -168,7 +169,7 @@ func run(){
 		for _, item := range runItems {
 			ghaRunIcon := aw.Icon{Value: item.IconPath}
 			// vars := wf.Var([string]string{"runID": item.UID, "branch": item.Title, "workflow": workflow, "runURL": item.HTMLURL})
-			wf.NewItem(item.Title).Var("runID", item.UID).Var("runNumber", item.RunNumber).Var("branch", item.Title).Var("workflow", item.WorkflowName).Subtitle(item.SubTitle).UID(item.UID).Icon(&ghaRunIcon).Valid(true).NewModifier("cmd").Arg(item.HTMLURL)
+			wf.NewItem(item.Title).Subtitle(item.SubTitle).UID(item.UID).Icon(&ghaRunIcon).Arg(item.HTMLURL).Valid(true).NewModifier("cmd").Var("runID", item.UID).Var("runNumber", item.RunNumber).Var("branch", item.Title).Var("workflow", item.WorkflowName)
 		}
 
 		if len(query) > 0 {

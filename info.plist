@@ -12,7 +12,7 @@
 				<key>destinationuid</key>
 				<string>74F6710C-1C06-4955-9B9A-7514B4C1AE58</string>
 				<key>modifiers</key>
-				<integer>0</integer>
+				<integer>1048576</integer>
 				<key>modifiersubtext</key>
 				<string></string>
 				<key>vitoclose</key>
@@ -22,7 +22,7 @@
 				<key>destinationuid</key>
 				<string>F34201E5-52DD-45C8-9E1A-828DEFB2A724</string>
 				<key>modifiers</key>
-				<integer>1048576</integer>
+				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
 				<key>vitoclose</key>
@@ -108,7 +108,7 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>9D482EBF-AF05-4EEC-8B4D-C62125906078</string>
+				<string>FF6F2385-944A-466C-A1EF-73EF36A90421</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -192,6 +192,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>FF6F2385-944A-466C-A1EF-73EF36A90421</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>9D482EBF-AF05-4EEC-8B4D-C62125906078</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 	</dict>
 	<key>createdby</key>
 	<string>Chi Hieu Huynh</string>
@@ -257,34 +270,23 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>concurrently</key>
+				<key>lastpathcomponent</key>
 				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>#echo "repo ${repo} runID ${runID}"
-
-./bin/watch_run -repo "${repo}" -runID "${runID}" &gt; /dev/null
-
-res=$?
-if [ $res -eq "0" ]; then
-	echo "succeeded"
-else
-	echo "failed"
-fi</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>{var:repo} &gt;&gt; {var:branch}</string>
+				<key>title</key>
+				<string>{var:workflow} #{var:runNumber} is registered</string>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.action.script</string>
+			<string>alfred.workflow.output.notification</string>
 			<key>uid</key>
-			<string>9D482EBF-AF05-4EEC-8B4D-C62125906078</string>
+			<string>FF6F2385-944A-466C-A1EF-73EF36A90421</string>
 			<key>version</key>
-			<integer>2</integer>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -396,13 +398,13 @@ fi</string>
 				<key>variables</key>
 				<dict>
 					<key>repo</key>
-					<string>{query}</string>
+					<string>{var:repo}</string>
 				</dict>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.utility.argument</string>
 			<key>uid</key>
-			<string>5C099F2A-5444-49DA-A2C1-0C4499D6F899</string>
+			<string>74F6710C-1C06-4955-9B9A-7514B4C1AE58</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -416,13 +418,13 @@ fi</string>
 				<key>variables</key>
 				<dict>
 					<key>repo</key>
-					<string>{var:repo}</string>
+					<string>{query}</string>
 				</dict>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.utility.argument</string>
 			<key>uid</key>
-			<string>74F6710C-1C06-4955-9B9A-7514B4C1AE58</string>
+			<string>5C099F2A-5444-49DA-A2C1-0C4499D6F899</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -445,27 +447,6 @@ fi</string>
 			<string>alfred.workflow.utility.argument</string>
 			<key>uid</key>
 			<string>38278A50-718C-4145-A3C0-52ACD468B7E9</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<true/>
-				<key>removeextension</key>
-				<false/>
-				<key>text</key>
-				<string>{var:repo} &gt;&gt; {var:branch}</string>
-				<key>title</key>
-				<string>{var:workflow} #{var:runNumber} {query}</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
-			<key>uid</key>
-			<string>E1910C6A-0906-416C-B63B-15F3BE9CC52B</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -525,6 +506,38 @@ fi</string>
 			<string>F34201E5-52DD-45C8-9E1A-828DEFB2A724</string>
 			<key>version</key>
 			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>#echo "repo ${repo} runID ${runID}"
+
+./bin/watch_run -repo "${repo}" -runID "${runID}" &gt; /dev/null
+
+res=$?
+if [ $res -eq "0" ]; then
+	echo "succeeded"
+else
+	echo "failed"
+fi</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>9D482EBF-AF05-4EEC-8B4D-C62125906078</string>
+			<key>version</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -677,6 +690,27 @@ fi</string>
 				<key>removeextension</key>
 				<false/>
 				<key>text</key>
+				<string>{var:repo} &gt;&gt; {var:branch}</string>
+				<key>title</key>
+				<string>{var:workflow} #{var:runNumber} {query}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>E1910C6A-0906-416C-B63B-15F3BE9CC52B</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<true/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
 				<string>{query}</string>
 				<key>title</key>
 				<string>Refesh done</string>
@@ -778,9 +812,9 @@ Run `gha-login` to authenticate with Github</string>
 		<key>9D482EBF-AF05-4EEC-8B4D-C62125906078</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1095</integer>
+			<integer>1010</integer>
 			<key>ypos</key>
-			<integer>50</integer>
+			<integer>300</integer>
 		</dict>
 		<key>ABA0DF5B-E3B5-4CB5-9D4B-66FE30AF879D</key>
 		<dict>
@@ -813,16 +847,23 @@ Run `gha-login` to authenticate with Github</string>
 		<key>E1910C6A-0906-416C-B63B-15F3BE9CC52B</key>
 		<dict>
 			<key>xpos</key>
-			<integer>1280</integer>
+			<integer>1135</integer>
 			<key>ypos</key>
-			<integer>155</integer>
+			<integer>590</integer>
 		</dict>
 		<key>F34201E5-52DD-45C8-9E1A-828DEFB2A724</key>
 		<dict>
 			<key>xpos</key>
-			<integer>885</integer>
+			<integer>750</integer>
 			<key>ypos</key>
-			<integer>245</integer>
+			<integer>260</integer>
+		</dict>
+		<key>FF6F2385-944A-466C-A1EF-73EF36A90421</key>
+		<dict>
+			<key>xpos</key>
+			<integer>1065</integer>
+			<key>ypos</key>
+			<integer>45</integer>
 		</dict>
 	</dict>
 	<key>variables</key>
