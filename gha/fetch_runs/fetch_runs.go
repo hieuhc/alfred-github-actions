@@ -19,7 +19,7 @@ import (
 
 // Workflow is the main API
 var (
-	logger = log.New(os.Stderr, "prefixLogger", log.LstdFlags)
+	logger = log.New(os.Stderr, "logger", log.LstdFlags)
 	maxAge =  3 * time.Minute
 	wf *aw.Workflow
 	repo string

@@ -19,7 +19,7 @@ import (
 // Workflow is the main API
 var (
 	// TODO fix logger name
-	logger = log.New(os.Stderr, "prefixLogger", log.LstdFlags)
+	logger = log.New(os.Stderr, "logger", log.LstdFlags)
 	wf *aw.Workflow
 	repo string
 	runIdString string

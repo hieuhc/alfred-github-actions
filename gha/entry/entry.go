@@ -19,7 +19,7 @@ const (
 )
 
 var (
-	logger = log.New(os.Stderr, "prefixLogger", log.LstdFlags)
+	logger = log.New(os.Stderr, "logger", log.LstdFlags)
 	wf *aw.Workflow
 	argToken string
 )
@@ -101,8 +101,14 @@ func run(){
 			keychainErr := keychain.AddItem(item)
 
 			if keychainErr == keychain.ErrorDuplicateItem {
-				// TODO override old key
-				logger.Printf("Github PAT duplicated in keychain")
+				logger.Printf("Updating Github PAT in keychain")
+				errDelete := keychain.DeleteItem(item)
+				errAdd := keychain.AddItem(item)
+				if (errDelete != nil || errAdd != nil){
+					wf.Fatal("Failed updating the PAT")
+				}
+			} else if (keychainErr != nil){
+				wf.Fatal("Failed setting the PAT")
 			}
 			logger.Printf("Login succeedded")
 		}

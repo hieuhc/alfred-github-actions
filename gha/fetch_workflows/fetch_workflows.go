@@ -18,7 +18,7 @@ import (
 
 // Workflow is the main API
 var (
-	logger = log.New(os.Stderr, "prefixLogger", log.LstdFlags)
+	logger = log.New(os.Stderr, "logger", log.LstdFlags)
 	maxCacheAge =  10 * time.Minute
 	workflowIcon  = &aw.Icon{Value: "icons/gha_wf.png"}
 	wf *aw.Workflow

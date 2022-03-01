@@ -12,7 +12,7 @@ const (
 )
 
 var (
-	logger = log.New(os.Stderr, "prefixLogger", log.LstdFlags)
+	logger = log.New(os.Stderr, "logger", log.LstdFlags)
 	repoIcon  = &aw.Icon{Value: "icons/github-repo.png"}
 	wf *aw.Workflow
 )
