@@ -5,7 +5,7 @@ and Alfred will send a notifcation when the run is finished.
 
 ## Install
 - Install [Alfred powerpack](https://www.alfredapp.com/powerpack/).
-- Download the latest version produced [here](). TODO update link here
+- Download the latest version produced [here](https://github.com/hieuhc/alfred-github-actions/releases). 
 - Install the workflow to Alfred.
 
 ## Usage
