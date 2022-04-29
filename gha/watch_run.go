@@ -2,41 +2,16 @@ package main
 
 import (
 	"context"
-	"flag"
-	"log"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
-	aw "github.com/deanishe/awgo"
 	"github.com/google/go-github/v41/github"
 	"github.com/keybase/go-keychain"
-	"go.deanishe.net/fuzzy"
 	"golang.org/x/oauth2"
 )
 
-// Workflow is the main API
-var (
-	// TODO fix logger name
-	logger = log.New(os.Stderr, "logger", log.LstdFlags)
-	wf *aw.Workflow
-	repo string
-	runIdString string
-)
-
-
-func init(){
-	sopts := []fuzzy.Option{
-		fuzzy.AdjacencyBonus(10.0),
-		fuzzy.LeadingLetterPenalty(-0.1),
-		fuzzy.MaxLeadingLetterPenalty(-3.0),
-		fuzzy.UnmatchedLetterPenalty(-0.5),
-	}
-	wf = aw.New(aw.SortOptions(sopts...))
-	flag.StringVar(&repo, "repo", "", "github repository to fetch workflows")
-	flag.StringVar(&runIdString, "runID", "", "runID to poll for status")
-}
 
 func checkRun(client *github.Client, context context.Context, owner string, repoName string, runID int64) (*string, error) {
 	run, _, err := client.Actions.GetWorkflowRunByID(context, owner, repoName, runID)
@@ -52,17 +27,15 @@ func checkRun(client *github.Client, context context.Context, owner string, repo
 	return &status, nil
 }
 
-func run(){
+func runWatchRun(){
 	logger.Println("Start watch gha workflow run")
-	flag.Parse()
 	ctx := context.Background()
 
 	// get token from keychain
 	// TODO common fetch token
-	keychain_service := "alfred_gha"
 	token := keychain.NewItem()
 	token.SetSecClass(keychain.SecClassGenericPassword)
-	token.SetService(keychain_service)
+	token.SetService(keychainService)
 	token.SetMatchLimit(keychain.MatchLimitOne)
 	token.SetReturnData(true)
 	results, err := keychain.QueryItem(token)
@@ -112,10 +85,4 @@ func run(){
 	}
 
 }
-
-
-func main(){
-	wf.Run(run)
-}
-
 

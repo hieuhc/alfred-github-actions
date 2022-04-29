@@ -1,39 +1,16 @@
 package main
 
 import (
-	"log"
-	"os"
 	aw "github.com/deanishe/awgo"
 )
 
-// TODO reuse from login.go
-const (
-	cachedGithubRepos = "cached-github-repositories.json"
-)
 
 var (
-	logger = log.New(os.Stderr, "logger", log.LstdFlags)
 	repoIcon  = &aw.Icon{Value: "icons/github-repo.png"}
-	wf *aw.Workflow
 )
 
-// TODO reuse from login.go
-type RepoWorkflowItem struct {
-	Owner string
-	Name string
-	Description string
-	UID string
-	HTMLURL string
-}
-
-func init(){
-	wf = aw.New()
-}
-
-func run(){
+func runFetchRepo(){
 	logger.Println("Start fetch respos alfred workflow")
-	args := wf.Args()
-
 	var repos []RepoWorkflowItem
 	if !wf.Cache.Exists(cachedGithubRepos) {
 		wf.Fatal("No repos cached, please run -refresh")
@@ -48,16 +25,11 @@ func run(){
 		wf.NewItem(repoFullName).Arg(repoFullName).Subtitle(repoItem.Description).UID(repoItem.UID).Icon(repoIcon).Valid(true).NewModifier("cmd").Arg(repoItem.HTMLURL)
 	}
 
-	if len(args) > 0 {
-		logger.Println("query: ", args[0])
-		wf.Filter(args[0])
+	if len(query) > 1 {
+		logger.Println("query: ", query)
+		wf.Filter(query)
 	}
 	wf.SendFeedback()
-}
-
-
-func main(){
-	wf.Run(run)
 }
 
 

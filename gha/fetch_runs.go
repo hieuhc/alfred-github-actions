@@ -2,10 +2,7 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
-	"log"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -13,19 +10,11 @@ import (
 	aw "github.com/deanishe/awgo"
 	"github.com/google/go-github/v41/github"
 	"github.com/keybase/go-keychain"
-	"go.deanishe.net/fuzzy"
 	"golang.org/x/oauth2"
 )
 
-// Workflow is the main API
 var (
-	logger = log.New(os.Stderr, "logger", log.LstdFlags)
 	maxAge =  3 * time.Minute
-	wf *aw.Workflow
-	repo string
-	query string
-	workflow string
-	cache bool
 	ghaIconPath string
 )
 
@@ -35,20 +24,6 @@ const (
 	runningIconPath  = "icons/gha-run.png"
 )
 
-func init(){
-	sopts := []fuzzy.Option{
-		fuzzy.AdjacencyBonus(10.0),
-		fuzzy.LeadingLetterPenalty(-0.1),
-		fuzzy.MaxLeadingLetterPenalty(-3.0),
-		fuzzy.UnmatchedLetterPenalty(-0.5),
-	}
-	wf = aw.New(aw.SortOptions(sopts...))
-	flag.StringVar(&repo, "repo", "", "github repository to fetch workflows")
-	flag.StringVar(&workflow, "workflow", "", "workflow ID to fetch runs")
-	flag.StringVar(&query, "query", "", "gha workflow to fetch instances in next step")
-	flag.BoolVar(&cache, "cache", false, "cache runs from a workflow")
-
-}
 type RunItem struct {
 	Title string
 	SubTitle string
@@ -108,16 +83,14 @@ func fetchRun(client *github.Client, context context.Context, owner string, repo
 	return runItems, nil
 }
 
-func run(){
+func runFetchRun(){
 	logger.Println("Start fetch gha workflow run")
-	flag.Parse()
 	ctx := context.Background()
 
 	// get token from keychain
-	keychain_service := "alfred_gha"
 	token := keychain.NewItem()
 	token.SetSecClass(keychain.SecClassGenericPassword)
-	token.SetService(keychain_service)
+	token.SetService(keychainService)
 	token.SetMatchLimit(keychain.MatchLimitOne)
 	token.SetReturnData(true)
 	results, err := keychain.QueryItem(token)
@@ -168,7 +141,6 @@ func run(){
 		}
 		for _, item := range runItems {
 			ghaRunIcon := aw.Icon{Value: item.IconPath}
-			// vars := wf.Var([string]string{"runID": item.UID, "branch": item.Title, "workflow": workflow, "runURL": item.HTMLURL})
 			wf.NewItem(item.Title).Subtitle(item.SubTitle).UID(item.UID).Icon(&ghaRunIcon).Arg(item.HTMLURL).Valid(true).NewModifier("cmd").Var("runID", item.UID).Var("runNumber", item.RunNumber).Var("branch", item.Title).Var("workflow", item.WorkflowName)
 		}
 
@@ -179,10 +151,3 @@ func run(){
 		wf.SendFeedback()
 	}
 }
-
-
-func main(){
-	wf.Run(run)
-}
-
-

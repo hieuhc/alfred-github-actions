@@ -3,8 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"log"
-	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -18,13 +16,8 @@ import (
 
 // Workflow is the main API
 var (
-	logger = log.New(os.Stderr, "logger", log.LstdFlags)
 	maxCacheAge =  10 * time.Minute
 	workflowIcon  = &aw.Icon{Value: "icons/gha_wf.png"}
-	wf *aw.Workflow
-	repo string
-	query string
-	cache bool
 )
 
 type GHAWorkflow struct {
@@ -34,24 +27,15 @@ type GHAWorkflow struct {
 	HTMLURL string
 }
 
-func init(){
-	wf = aw.New()
-	flag.StringVar(&repo, "repo", "", "github repository to fetch workflows")
-	flag.StringVar(&query, "query", "", "gha workflow to fetch instances in next step")
-	flag.BoolVar(&cache, "cache", false, "whether the repo's workflows is cached'")
-
-}
-
-func run(){
+func runFetchWorkflow(){
 	logger.Println("Start fetch gha workflows alfred workflow")
 	flag.Parse()
 	ctx := context.Background()
 
 	// get token from keychain
-	keychain_service := "alfred_gha"
 	token := keychain.NewItem()
 	token.SetSecClass(keychain.SecClassGenericPassword)
-	token.SetService(keychain_service)
+	token.SetService(keychainService)
 	token.SetMatchLimit(keychain.MatchLimitOne)
 	token.SetReturnData(true)
 	results, err := keychain.QueryItem(token)
@@ -107,7 +91,7 @@ func run(){
 			logger.Printf("Cache is expired or not existed !!")
 			wf.Rerun(0.5)
 			if !wf.IsRunning("cachingWorkflows") {
-				cmd := exec.Command("./bin/fetch_workflows", "-cache", "-repo", repo)
+				cmd := exec.Command("./bin/main", "-stage", "fetch_workflow", "-cache", "-repo", repo)
 				logger.Printf("Run in background with comand %s", cmd.String())
 				if err := wf.RunInBackground("cachingWorkflows", cmd); err != nil {
 					wf.FatalError(err)
@@ -122,7 +106,7 @@ func run(){
 			}
 		}
 		for _, ghaWf := range GhaWorkflows {
-			cmd := exec.Command("./bin/fetch_runs", "-cache", "-repo", repo, "-workflow", ghaWf.FileName)
+			cmd := exec.Command("./bin/main", "-stage", "fetch_run", "-cache", "-repo", repo, "-workflow", ghaWf.FileName)
 			logger.Printf("Run in background with comand %s", cmd.String())
 
 			jobName := "cache_runs" + owner + repoName + ghaWf.FileName
@@ -137,9 +121,5 @@ func run(){
 	}
 }
 
-
-func main(){
-	wf.Run(run)
-}
 
 
