@@ -246,7 +246,7 @@
 				<key>script</key>
 				<string>query=$1
 
-./bin/fetch_repos "${query}"</string>
+./bin/main -stage fetch_repo -query "${query}"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -316,7 +316,7 @@
 				<key>script</key>
 				<string>query=$1
 
-./bin/fetch_runs -repo "${repo}" -workflow "${workflow}" -query "${query}"
+./bin/main -stage fetch_run -repo "${repo}" -workflow "${workflow}" -query "${query}"
 
 </string>
 				<key>scriptargtype</key>
@@ -367,7 +367,7 @@
 				<key>script</key>
 				<string>query=$1
 
-./bin/fetch_workflows -repo "${repo}" -query "${query}"</string>
+./bin/main -stage fetch_workflow -repo "${repo}" -query "${query}"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -517,7 +517,7 @@
 				<key>script</key>
 				<string>#echo "repo ${repo} runID ${runID}"
 
-./bin/watch_run -repo "${repo}" -runID "${runID}" &gt; /dev/null
+./bin/main -stage watch_run -repo "${repo}" -runID "${runID}" &gt; /dev/null
 
 res=$?
 if [ $res -eq "0" ]; then
@@ -568,7 +568,7 @@ fi</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>./bin/entry -login "${token}" &gt; /dev/null
+				<string>./bin/main -stage entry -ghToken "${token}" &gt; /dev/null
 res=$?
 if [ $res -eq "0" ]; then
 	echo "login succeeded"
@@ -659,7 +659,7 @@ fi</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>./bin/entry &gt; /dev/null
+				<string>./bin/main -stage entry &gt; /dev/null
 res=$?
 if [ $res -eq "0" ]; then
 	echo "refesh succeeded"
