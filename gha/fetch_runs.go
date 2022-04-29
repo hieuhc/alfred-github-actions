@@ -9,7 +9,6 @@ import (
 
 	aw "github.com/deanishe/awgo"
 	"github.com/google/go-github/v41/github"
-	"github.com/keybase/go-keychain"
 	"golang.org/x/oauth2"
 )
 
@@ -88,66 +87,54 @@ func runFetchRun(){
 	ctx := context.Background()
 
 	// get token from keychain
-	token := keychain.NewItem()
-	token.SetSecClass(keychain.SecClassGenericPassword)
-	token.SetService(keychainService)
-	token.SetMatchLimit(keychain.MatchLimitOne)
-	token.SetReturnData(true)
-	results, err := keychain.QueryItem(token)
-
+	token, err := getToken()
 	if err != nil {
-		logger.Println("Error", err)
-		wf.Fatal(err.Error())
-	} else if len(results) != 1 {
-		logger.Println("Github PAT not found in keychain")
-		return
-	} else {
-		token := string(results[0].Data)
-		logger.Println("Found Github PAT in keychain")
+		wf.FatalError(err)
+	}
+	logger.Println("Found Github PAT in keychain")
 
-		ts := oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: token},
-		)
-		tc := oauth2.NewClient(ctx, ts)
-		client := github.NewClient(tc)
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: token},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+	client := github.NewClient(tc)
 
-		repoInfo := strings.Split(repo, "/")
-		owner := repoInfo[0]
-		repoName := repoInfo[1]
-		runCacheName := fmt.Sprintf("%s_%s_run_%s.json", owner, repoName, workflow)
+	repoInfo := strings.Split(repo, "/")
+	owner := repoInfo[0]
+	repoName := repoInfo[1]
+	runCacheName := fmt.Sprintf("%s_%s_run_%s.json", owner, repoName, workflow)
 
-		reload := func() (interface{}, error) { return fetchRun(client, ctx, owner, repoName) }
-		var runItems []RunItem
-		if cache {
-			if err := wf.Cache.LoadOrStoreJSON(runCacheName, maxAge, reload, &runItems); err != nil {
-				wf.Fatal(err.Error())
-			}
-			return
-		}
-		// Check if the background job started at workflow level is still running
-		// TODO sync with background jobname in fetch_workflows
-		backgroundJobName := "cache_runs" + owner + repoName + workflow
-		for {
-			if wf.IsRunning(backgroundJobName){
-				logger.Printf("Background job %s is still running", backgroundJobName)
-				time.Sleep(200 * time.Millisecond)
-			} else {
-				break
-			}
-		}
-
+	reload := func() (interface{}, error) { return fetchRun(client, ctx, owner, repoName) }
+	var runItems []RunItem
+	if cache {
 		if err := wf.Cache.LoadOrStoreJSON(runCacheName, maxAge, reload, &runItems); err != nil {
 			wf.Fatal(err.Error())
 		}
-		for _, item := range runItems {
-			ghaRunIcon := aw.Icon{Value: item.IconPath}
-			wf.NewItem(item.Title).Subtitle(item.SubTitle).UID(item.UID).Icon(&ghaRunIcon).Arg(item.HTMLURL).Valid(true).NewModifier("cmd").Var("runID", item.UID).Var("runNumber", item.RunNumber).Var("branch", item.Title).Var("workflow", item.WorkflowName)
-		}
-
-		if len(query) > 0 {
-			logger.Println("query: ", query)
-			wf.Filter(query)
-		}
-		wf.SendFeedback()
+		return
 	}
+	// Check if the background job started at workflow level is still running
+	// TODO sync with background jobname in fetch_workflows
+	backgroundJobName := "cache_runs" + owner + repoName + workflow
+	for {
+		if wf.IsRunning(backgroundJobName){
+			logger.Printf("Background job %s is still running", backgroundJobName)
+			time.Sleep(200 * time.Millisecond)
+		} else {
+			break
+		}
+	}
+
+	if err := wf.Cache.LoadOrStoreJSON(runCacheName, maxAge, reload, &runItems); err != nil {
+		wf.Fatal(err.Error())
+	}
+	for _, item := range runItems {
+		ghaRunIcon := aw.Icon{Value: item.IconPath}
+		wf.NewItem(item.Title).Subtitle(item.SubTitle).UID(item.UID).Icon(&ghaRunIcon).Arg(item.HTMLURL).Valid(true).NewModifier("cmd").Var("runID", item.UID).Var("runNumber", item.RunNumber).Var("branch", item.Title).Var("workflow", item.WorkflowName)
+	}
+
+	if len(query) > 0 {
+		logger.Println("query: ", query)
+		wf.Filter(query)
+	}
+	wf.SendFeedback()
 }
