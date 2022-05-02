@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	maxAge =  3 * time.Minute
+	maxAge =  1 * time.Minute
 	ghaIconPath string
 )
 
@@ -106,14 +106,14 @@ func runFetchRun(){
 
 	reload := func() (interface{}, error) { return fetchRun(client, ctx, owner, repoName) }
 	var runItems []RunItem
+	// Used only in background job triggered by fetch_workflow
 	if cache {
 		if err := wf.Cache.LoadOrStoreJSON(runCacheName, maxAge, reload, &runItems); err != nil {
 			wf.Fatal(err.Error())
 		}
 		return
 	}
-	// Check if the background job started at workflow level is still running
-	// TODO sync with background jobname in fetch_workflows
+	// Check if the background job started in fetch_workflow is still running
 	backgroundJobName := "cache_runs" + owner + repoName + workflow
 	for {
 		if wf.IsRunning(backgroundJobName){
